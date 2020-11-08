@@ -1,4 +1,5 @@
 import pytest
+import brownie
 
 @pytest.fixture
 def auction_contract(auction, accounts):
@@ -18,3 +19,11 @@ def test_bid(auction_contract, accounts):
     auction_contract.bid({'from': accounts[1], 'value': 20})
     assert auction_contract.highestBid() == 20
     assert auction_contract.highestBidder() == accounts[1]
+
+
+def test_auction_bid_failed(web3, auction_contract, accounts):
+    auction_contract.bid({'from': accounts[0], 'value': 100})
+    with brownie.reverts():
+        auction_contract.bid({'from': accounts[1], 'value': 50})
+    assert auction_contract.highestBid() == 100
+    assert auction_contract.highestBidder() == accounts[0]
