@@ -1,4 +1,5 @@
-pragma solidity >=0.4.22 <0.7.0;
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity >=0.7.0;
 
 contract SimpleAuction {
     address payable public beneficiary;
@@ -18,13 +19,13 @@ contract SimpleAuction {
     constructor(
         uint _biddingTime,
         address payable _beneficiary
-    ) public {
+    ) {
         beneficiary = _beneficiary;
-        auctionEndTime = now + _biddingTime;
+        auctionEndTime = block.timestamp + _biddingTime;
     }
 
     function bid() public payable {
-        require(now <= auctionEndTime, "Auction already ended");
+        require(block.timestamp <= auctionEndTime, "Auction already ended");
         require(msg.value > highestBid, "There is already a higher bid");
 
         if (highestBid != 0) {
@@ -49,7 +50,7 @@ contract SimpleAuction {
     }
 
     function auctionEnd() public {
-        require(now >= auctionEndTime, "Auction not yet ended");
+        require(block.timestamp >= auctionEndTime, "Auction not yet ended");
         require(!ended, "auctionEnd has already been called");
 
         ended = true;
